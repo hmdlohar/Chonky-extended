@@ -15,13 +15,16 @@ import { reduxActions } from '../../redux/reducers';
 import { selectSearchString } from '../../redux/selectors';
 import { ChonkyIconName } from '../../types/icons.types';
 import { useDebounce } from '../../util/hooks-helpers';
-import { getI18nId, I18nNamespace } from '../../util/i18n';
+import { I18nNamespace, getI18nId } from '../../util/i18n';
 import { ChonkyIconContext } from '../../util/icon-helper';
 import { important, makeGlobalChonkyStyles } from '../../util/styles';
 
-export interface ToolbarSearchProps {}
+export interface ToolbarSearchProps {
+    onSearchChange?: (search: string) => void
 
-export const ToolbarSearch: React.FC<ToolbarSearchProps> = React.memo(() => {
+}
+
+export const ToolbarSearch: React.FC<ToolbarSearchProps> = React.memo((props) => {
     const intl = useIntl();
     const searchPlaceholderString = intl.formatMessage({
         id: getI18nId(I18nNamespace.Toolbar, 'searchPlaceholder'),
@@ -53,10 +56,16 @@ export const ToolbarSearch: React.FC<ToolbarSearchProps> = React.memo(() => {
 
     useEffect(() => {
         setShowLoadingIndicator(false);
+        if (props.onSearchChange) {
+            return
+        }
         dispatch(reduxActions.setSearchString(debouncedLocalSearchString));
     }, [debouncedLocalSearchString, dispatch]);
 
     const handleChange = useCallback((event: React.FormEvent<HTMLInputElement>) => {
+        if (props.onSearchChange) {
+            props.onSearchChange(event.currentTarget.value || "");
+        }
         setShowLoadingIndicator(true);
         setLocalSearchString(event.currentTarget.value);
     }, []);

@@ -6,7 +6,6 @@ export const initialRootState: RootState = {
     instanceId: 'CHONKY_INVALID_ID', // should be overwritten by preloaded state
 
     externalFileActionHandler: null,
-
     rawFileActions: [],
     fileActionsErrorMessages: [],
     fileActionMap: {},
