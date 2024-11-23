@@ -20,11 +20,11 @@ import { ChonkyIconContext } from '../../util/icon-helper';
 import { important, makeGlobalChonkyStyles } from '../../util/styles';
 
 export interface ToolbarSearchProps {
-    onSearchChange?: (search: string) => void
-
+    onSearchChange?: (search: string) => void;
+    searchValue?: string;
 }
 
-export const ToolbarSearch: React.FC<ToolbarSearchProps> = React.memo((props) => {
+export const ToolbarSearch: React.FC<ToolbarSearchProps> = React.memo(props => {
     const intl = useIntl();
     const searchPlaceholderString = intl.formatMessage({
         id: getI18nId(I18nNamespace.Toolbar, 'searchPlaceholder'),
@@ -57,14 +57,15 @@ export const ToolbarSearch: React.FC<ToolbarSearchProps> = React.memo((props) =>
     useEffect(() => {
         setShowLoadingIndicator(false);
         if (props.onSearchChange) {
-            return
+            return;
         }
         dispatch(reduxActions.setSearchString(debouncedLocalSearchString));
     }, [debouncedLocalSearchString, dispatch]);
 
     const handleChange = useCallback((event: React.FormEvent<HTMLInputElement>) => {
         if (props.onSearchChange) {
-            props.onSearchChange(event.currentTarget.value || "");
+            props.onSearchChange(event.currentTarget.value || '');
+            return;
         }
         setShowLoadingIndicator(true);
         setLocalSearchString(event.currentTarget.value);
@@ -89,7 +90,7 @@ export const ToolbarSearch: React.FC<ToolbarSearchProps> = React.memo((props) =>
             className={classes.searchFieldContainer}
             size="small"
             variant="outlined"
-            value={localSearchString}
+            value={props.searchValue || localSearchString}
             placeholder={searchPlaceholderString}
             onChange={handleChange as any}
             inputRef={searchInputRef}
@@ -98,7 +99,11 @@ export const ToolbarSearch: React.FC<ToolbarSearchProps> = React.memo((props) =>
                 startAdornment: (
                     <InputAdornment className={classes.searchIcon} position="start">
                         <ChonkyIcon
-                            icon={showLoadingIndicator ? ChonkyIconName.loading : ChonkyIconName.search}
+                            icon={
+                                showLoadingIndicator
+                                    ? ChonkyIconName.loading
+                                    : ChonkyIconName.search
+                            }
                             spin={showLoadingIndicator}
                         />
                     </InputAdornment>
